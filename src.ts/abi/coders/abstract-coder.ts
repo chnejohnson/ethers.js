@@ -6,6 +6,7 @@ import {
 } from "../../utils/index.js";
 
 import type { BigNumberish, BytesLike } from "../../utils/index.js";
+import { inspect, InspectOptions } from 'util';
 
 /**
  * @_ignore:
@@ -15,7 +16,7 @@ const Padding = new Uint8Array(WordSize);
 
 // Properties used to immediate pass through to the underlying object
 // - `then` is used to detect if an object is a Promise for await
-const passProperties = [ "then" ];
+const passProperties = [ "then", inspect.custom ];
 
 const _guard = { };
 
@@ -36,6 +37,10 @@ export class Result extends Array<any> {
     readonly #names: ReadonlyArray<null | string>;
 
     [ K: string | number ]: any
+
+    [inspect.custom](_depth: number, options: InspectOptions) {
+        return `Result(${this.length}) ${inspect(this.toArray(), options)}`;
+    }
 
     /**
      *  @private
